@@ -4,7 +4,7 @@
 int main(int argc, char **argv)
 {
 
-  if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug)) 
+  if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
   {
      ros::console::notifyLoggerLevelsChanged();
   }
@@ -23,8 +23,8 @@ int main(int argc, char **argv)
 
   while (ros::ok())
   {
-    line_extractor.run();
     ros::spinOnce();
+    // line_extractor.run();
     rate.sleep();
   }
   return 0;
