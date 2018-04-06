@@ -16,17 +16,19 @@ int main(int argc, char **argv)
   ros::NodeHandle nh_local("~");
   line_extraction::LineExtractionROS line_extractor(nh, nh_local);
 
-  double frequency;
-  nh_local.param<double>("frequency", frequency, 25);
-  ROS_DEBUG("Frequency set to %0.1f Hz", frequency);
-  ros::Rate rate(frequency);
 
-  while (ros::ok())
-  {
-    ros::spinOnce();
-    // line_extractor.run();
-    rate.sleep();
-  }
+  ros::spin();
+  // double frequency;
+  // nh_local.param<double>("frequency", frequency, 25);
+  // ROS_DEBUG("Frequency set to %0.1f Hz", frequency);
+  // ros::Rate rate(frequency);
+
+  // while (ros::ok())
+  // {
+  //   ros::spinOnce();
+  //   // line_extractor.run();
+  //   rate.sleep();
+  // }
   return 0;
 }
 

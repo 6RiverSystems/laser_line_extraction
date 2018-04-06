@@ -146,7 +146,7 @@ void LineExtractionROS::populateLineSegListMsg(const std::vector<Line> &lines,
     line_list_msg.line_segments.push_back(line_msg);
   }
   line_list_msg.header.frame_id = frame_id_;
-  line_list_msg.header.stamp = ros::Time::now();
+  line_list_msg.header.stamp = scan_stamp_;
 }
 
 void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
@@ -174,7 +174,7 @@ void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
     marker_msg.points.push_back(p_end);
   }
   marker_msg.header.frame_id = frame_id_;
-  marker_msg.header.stamp = ros::Time::now();
+  marker_msg.header.stamp = scan_stamp_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -211,7 +211,9 @@ void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(), scan_msg->ranges.end());
   line_extraction_.setRangeData(scan_ranges_doubles);
-  ROS_INFO("laserscan cb with scan data from time %f", scan_msg->header.stamp.sec + scan_msg->header.stamp.nsec * 1e-9);
+  ROS_INFO("laserscan cb with scan data from time %f at time %f",
+    scan_msg->header.stamp.sec + scan_msg->header.stamp.nsec * 1e-9, ros::Time::now().toSec());
+  scan_stamp_ = scan_msg->header.stamp;
   run();
 }
 
