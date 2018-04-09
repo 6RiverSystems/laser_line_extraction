@@ -32,7 +32,6 @@ LineExtractionROS::~LineExtractionROS()
 ///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::run()
 {
-  ROS_INFO("Starting run");
   // Extract the lines
   std::vector<Line> lines;
   line_extraction_.extractLines(lines);
@@ -51,7 +50,6 @@ void LineExtractionROS::run()
     populateMarkerMsg(lines, marker_msg);
     marker_publisher_.publish(marker_msg);
   }
-  ROS_INFO("Run ended.");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -211,7 +209,7 @@ void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(), scan_msg->ranges.end());
   line_extraction_.setRangeData(scan_ranges_doubles);
-  ROS_INFO("laserscan cb with scan data from time %f at time %f",
+  ROS_DEBUG("laserscan cb with scan data from time %f at time %f",
     scan_msg->header.stamp.sec + scan_msg->header.stamp.nsec * 1e-9, ros::Time::now().toSec());
   scan_stamp_ = scan_msg->header.stamp;
   run();
