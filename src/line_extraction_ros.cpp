@@ -39,7 +39,7 @@ void LineExtractionROS::run()
   // Populate message
   laser_line_extraction::LineSegmentList msg;
   populateLineSegListMsg(lines, msg);
-  
+
   // Publish the lines
   line_publisher_.publish(msg);
 
@@ -57,12 +57,12 @@ void LineExtractionROS::run()
 ///////////////////////////////////////////////////////////////////////////////
 void LineExtractionROS::loadParameters()
 {
-  
+
   ROS_DEBUG("*************************************");
   ROS_DEBUG("PARAMETERS:");
 
   // Parameters used by this node
-  
+
   std::string frame_id, scan_topic;
   bool pub_markers;
 
@@ -95,7 +95,7 @@ void LineExtractionROS::loadParameters()
   nh_local_.param<double>("least_sq_angle_thresh", least_sq_angle_thresh, 1e-4);
   line_extraction_.setLeastSqAngleThresh(least_sq_angle_thresh);
   ROS_DEBUG("least_sq_angle_thresh: %f", least_sq_angle_thresh);
-  
+
   nh_local_.param<double>("least_sq_radius_thresh", least_sq_radius_thresh, 1e-4);
   line_extraction_.setLeastSqRadiusThresh(least_sq_radius_thresh);
   ROS_DEBUG("least_sq_radius_thresh: %f", least_sq_radius_thresh);
@@ -136,18 +136,18 @@ void LineExtractionROS::populateLineSegListMsg(const std::vector<Line> &lines,
   for (std::vector<Line>::const_iterator cit = lines.begin(); cit != lines.end(); ++cit)
   {
     laser_line_extraction::LineSegment line_msg;
-    line_msg.angle = cit->getAngle(); 
-    line_msg.radius = cit->getRadius(); 
-    line_msg.covariance = cit->getCovariance(); 
-    line_msg.start = cit->getStart(); 
-    line_msg.end = cit->getEnd(); 
+    line_msg.angle = cit->getAngle();
+    line_msg.radius = cit->getRadius();
+    line_msg.covariance = cit->getCovariance();
+    line_msg.start = cit->getStart();
+    line_msg.end = cit->getEnd();
     line_list_msg.line_segments.push_back(line_msg);
   }
   line_list_msg.header.frame_id = frame_id_;
-  line_list_msg.header.stamp = ros::Time::now();
+  line_list_msg.header.stamp = scan_stamp_;
 }
 
-void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines, 
+void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
                                            visualization_msgs::Marker &marker_msg)
 {
   marker_msg.ns = "line_extraction";
@@ -172,7 +172,7 @@ void LineExtractionROS::populateMarkerMsg(const std::vector<Line> &lines,
     marker_msg.points.push_back(p_end);
   }
   marker_msg.header.frame_id = frame_id_;
-  marker_msg.header.stamp = ros::Time::now();
+  marker_msg.header.stamp = scan_stamp_;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -203,12 +203,16 @@ void LineExtractionROS::laserScanCallback(const sensor_msgs::LaserScan::ConstPtr
 {
   if (!data_cached_)
   {
-    cacheData(scan_msg); 
+    cacheData(scan_msg);
     data_cached_ = true;
   }
 
   std::vector<double> scan_ranges_doubles(scan_msg->ranges.begin(), scan_msg->ranges.end());
   line_extraction_.setRangeData(scan_ranges_doubles);
+  ROS_DEBUG("laserscan cb with scan data from time %f at time %f",
+    scan_msg->header.stamp.sec + scan_msg->header.stamp.nsec * 1e-9, ros::Time::now().toSec());
+  scan_stamp_ = scan_msg->header.stamp;
+  run();
 }
 
 } // namespace line_extraction

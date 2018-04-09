@@ -39,6 +39,8 @@ private:
   // Line extraction
   LineExtraction line_extraction_;
   bool data_cached_; // true after first scan used to cache data
+
+  ros::Time scan_stamp_;
   // Members
   void loadParameters();
   void populateLineSegListMsg(const std::vector<Line>&, laser_line_extraction::LineSegmentList&);
