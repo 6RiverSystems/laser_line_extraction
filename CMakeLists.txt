@@ -14,8 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-find_package(Eigen REQUIRED)
-
+find_package(Eigen3 REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -86,28 +85,32 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS message_runtime roscpp
-  DEPENDS eigen
 )
 
 ###########
 ## Build ##
 ###########
 
-include_directories(include ${catkin_INCLUDE_DIRS})
-include_directories(include ${Eigen_INCLUDE_DIRS})
+include_directories(include 
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
+)
 
 add_library(line src/line.cpp)
-target_link_libraries(line ${catkin_LIBRARIES})
+add_dependencies(line ${catkin_EXPORTED_TARGETS})
+target_link_libraries(line ${catkin_LIBRARIES} ${Eigen3_LIBRARIES})
 
 add_library(line_extraction src/line_extraction.cpp)
+add_dependencies(line_extraction ${catkin_EXPORTED_TARGETS})
 target_link_libraries(line_extraction ${catkin_LIBRARIES})
 
-add_library(line_extraction_ros src/line_extraction_ros.cpp)
-target_link_libraries(line_extraction_ros line line_extraction)
-add_dependencies(line_extraction_ros laser_line_extraction_generate_messages_cpp)
+add_library(laser_line_extraction src/line_extraction_ros.cpp)
+add_dependencies(laser_line_extraction ${catkin_EXPORTED_TARGETS})
+target_link_libraries(laser_line_extraction line line_extraction)
 
 add_executable(line_extraction_node src/line_extraction_node.cpp)
-target_link_libraries(line_extraction_node line_extraction_ros)
+add_dependencies(line_extraction_node ${catkin_EXPORTED_TARGETS})
+target_link_libraries(line_extraction_node laser_line_extraction)
 
 #############
 ## Install ##
