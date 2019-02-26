@@ -119,7 +119,7 @@ target_link_libraries(line_extraction_node laser_line_extraction)
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
-install(TARGETS line_extraction_node line line_extraction line_extraction_ros
+install(TARGETS line line_extraction laser_line_extraction line_extraction_node
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
